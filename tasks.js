@@ -1,5 +1,5 @@
-require('constans.js');
-var utils = require('utils.js');
+require('constants');
+var utils = require('utils');
 
 var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -21,10 +21,21 @@ function basicTask(roomName){
 }
 
 module.exports = {
+
+	run: function(roomName){
+		if(Memory.tasks == undefined){
+			Memory.tasks = {};
+		}
+		if(Memory.tasks[roomName] == undefined){
+			this.initStaticTasks(roomName);
+		}
+		this.updateTasks(roomName);
+	},
+
 	updateTasks:function(roomName){
 		var structures = Memory.rooms[roomName].objects.structures;
 		var constructionSites = Memory.rooms[roomName].objects.constructionSites;
-
+		//console.log(constructionSites.length);
 		//build
 		for(var i in constructionSites){
 			constructionSite = constructionSites[i];
@@ -40,6 +51,7 @@ module.exports = {
 				task.target = constructionSite.id;
 				task.roomName = roomName;
 				task.range = 3;
+				//console.log(Memory.tasks[roomName].build);
 				Memory.tasks[roomName].build[task.id] = task;
 			}
 		}
@@ -86,7 +98,7 @@ module.exports = {
 			}
 
 			//collect
-			if(structureType == STRUCTURE_CONTAINER || structureType == STRUCTURE_STORAGE 
+			if(structureType == STRUCTURE_CONTAINER || structureType == STRUCTURE_STORAGE)
 			{
 				var taskId = findTask(Memory.tasks[roomName].collect,structure.id);
 				if(taskId){
@@ -121,33 +133,38 @@ module.exports = {
 		}
 	},
 
-	initStaticTasks:function(roomName):{ //run once
+	initStaticTasks:function(roomName){ //run once
 		var sources = Memory.rooms[roomName].objects.sources;
-		Memory.tasks[roomName] = {};
-		Memory.tasks[roomName].harvest = [];
-		tasksList = []
+		var tasksList = {
+			harvest:{},
+			build:{},
+			repair:{},
+			upgrade:{},
+			store:{},
+			collect:{},
+			fight:{},
+		};
+		console.log("YES");
 		for(var i in sources){
 			var task = basicTask(roomName);
-			var id = task.id;
 			task.type = TYPE_HARVEST;
 			task.subtype = SUBTYPE_NORMAL_HARVEST;
 			task.priority = 1000;
 			task.target = sources[i].id;
 			task.require = 2;
 			task.roomName = roomName;
-			tasksList[roomName].harvest[id] = task;
+			tasksList.harvest[task.id] = task;
 		}
 
-		var controller = Game.room[roomName].controller;
+		var controller = Game.rooms[roomName].controller;
 		var task = basicTask(roomName);
-		var id = task.id;
 		task.type = TYPE_UPGRADE;
 		task.priority = 1000;
 		task.target = controller.id;
 		task.require = 1;
 		task.roomName = roomName;
 		task.range = 3;
-		tasksList[roomName].upgrade[id] = task;
+		tasksList.upgrade[task.id] = task;
 
 		Memory.tasks[roomName] = tasksList;
 	},

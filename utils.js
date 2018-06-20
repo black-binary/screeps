@@ -1,5 +1,6 @@
 //some commonly used functions
 
+var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
 module.exports = {
 	markContainer: function(container){
 		var id = container.id;
@@ -18,6 +19,6 @@ module.exports = {
 			id += alphabet[Math.floor(Math.random() * 36)];
 		}
 		return id;
-	};
+	},
 
 };

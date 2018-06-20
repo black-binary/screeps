@@ -1,6 +1,18 @@
 module.exports = {
-	initRoomData:function(roomName,charged = undefined):{
-		var objects = scanRoomObjects(roomName);
+
+	run:function(roomName){
+		if(Memory.rooms == undefined){
+			Memory.rooms = {};
+		}
+		if(Memory.rooms[roomName] == undefined){
+			Memory.rooms[roomName] = {};
+			this.initRoomData(roomName);
+		}
+		this.scanRoomObjects(roomName);
+	},
+
+	initRoomData:function(roomName,charged = undefined){
+		var objects = this.scanRoomObjects(roomName);
 		var mem = {};
 		mem.rooms[producedEnergy] = 0;
 		mem.rooms[consumedEnergy] = 0;
