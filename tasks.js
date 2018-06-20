@@ -4,7 +4,7 @@ var utils = require('utils.js');
 var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
 function findTask(tasks, target){
-	for(i in tasks){
+	for(var i in tasks){
 		if(tasks[i].target == target){
 			return i;
 		}
@@ -24,6 +24,7 @@ function basicTask(roomName){
 	return {
 		id: genId(),
 		roomName: roomName,
+		range: 1,
 	}
 }
 
@@ -33,7 +34,7 @@ module.exports = {
 		var constructionSites = Memory.rooms[roomName].objects.constructionSites;
 
 		//build
-		for(i in constructionSites){
+		for(var i in constructionSites){
 			constructionSite = constructionSites[i];
 			var taskId = findTask(Memory.tasks[roomName].build,constructionSite.id);
 			if(taskId){
@@ -42,15 +43,17 @@ module.exports = {
 				var task = basicTask(roomName);
 				task.type = TYPE_BUILD;
 				task.priority = 900;
-				task.progress = 0;
+				task.progress = constructionSite.progressTotal;
+				task.schedule = 0;
 				task.target = constructionSite.id;
 				task.roomName = roomName;
+				task.range = 3;
 				Memory.tasks[roomName].build[task.id] = task;
 			}
 		}
 
 		//store/collect
-		for(i in structures){
+		for(var i in structures){
 			var structure = structures[i];
 			var structureType = structures.structureType;
 
@@ -131,7 +134,7 @@ module.exports = {
 		Memory.tasks[roomName] = {};
 		Memory.tasks[roomName].harvest = [];
 		tasksList = []
-		for(i in sources){
+		for(var i in sources){
 			var task = basicTask(roomName);
 			var id = task.id;
 			task.type = TYPE_HARVEST;
@@ -151,6 +154,7 @@ module.exports = {
 		task.target = controller.id;
 		task.require = 1;
 		task.roomName = roomName;
+		task.range = 3;
 		tasksList[roomName].upgrade[id] = task;
 
 		Memory.tasks[roomName] = tasksList;
