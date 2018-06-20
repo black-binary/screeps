@@ -1,0 +1,13 @@
+global.TYPE_HARVEST = 1;
+global.TYPE_COLLECT= 2;
+global.TYPE_STORE = 3;
+global.TYPE_REPAIR = 4;
+global.TYPE_BUILD = 5;
+global.TYPE_UPGRADE = 6;
+
+global.SUBTYPE_FIXED_HARVEST = 1;
+global.SUBTYPE_REMOTE_HARVEST = 2;
+global.SUBTYPE_NORMAL_HARVEST = 3;
+
+global.SUBTYPE_TRANSFER_STORE = 1;
+global.SUBTYPE_STORE_STORE = 2;
