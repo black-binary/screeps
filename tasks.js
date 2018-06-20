@@ -12,17 +12,9 @@ function findTask(tasks, target){
 	return undefined;
 }
 
-function genId(){
-	var id = '';
-	for(var i = 0; i < 15; i++){
-		id += alphabet[Math.floor(Math.random() * 36)];
-	}
-	return id;
-}
-
 function basicTask(roomName){
 	return {
-		id: genId(),
+		id: utils.genId(),
 		roomName: roomName,
 		range: 1,
 	}

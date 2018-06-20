@@ -149,23 +149,25 @@ Creep.memory的结构
 
 #### 孵化队列
 
-每个spawn有一个孵化的优先队列(堆好像没有必要,元素太少), 按优先级复活
-存储在Memory.respawn.(spawn_name)
+每个spawn有一个孵化的优先队列(堆好像没有必要?元素太少), 按优先级复活
+存储在Memory.rooms[room_name].population.queue
 	
 结构如下:
 
+id:
 {
 	priority:孵化优先级,
 	memory:{...}孵化后creep的初始化memory,
 	body:creep配置,
+	num:孵化数量
 }
 
 #### 孵化策略
 
-存储位置Memory.spawn[spawn名].queue
+存储位置Memory.rooms.respawnQueue
 
 - 采集
-	等级<=2时, 采集者数=sources数*2
+	等级<=2时, harvester数=sources数*2
 	等级>=3时, harvester数=sources数
 
 - 运输
