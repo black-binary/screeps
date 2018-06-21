@@ -84,13 +84,13 @@ module.exports = {
 					|| (structureType == STRUCTURE_CONTAINER 
 						&& !utils.testContainer(structure)) ){
 					if(taskId){
-						Memory.tasks[roomName].store[taskId].progress = structure.storeCapacity - structure.store[RESOUCE_ENERGY];
+						Memory.tasks[roomName].store[taskId].progress = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
 					}else{
 						task.type = TYPE_STORE;
 						task.subtype = SUBTYPE_STORE_STORE;
 						task.priority = 900;
 						task.target = structure.id;
-						task.progress = structure.storeCapacity - structure.store[RESOUCE_ENERGY];
+						task.progress = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
 					}
 				}
 				task.roomName = roomName;
@@ -102,14 +102,14 @@ module.exports = {
 			{
 				var taskId = findTask(Memory.tasks[roomName].collect,structure.id);
 				if(taskId){
-					Memory.tasks[roomName].collect[taskId].progress = structure.store[RESOUCE_ENERGY];
+					Memory.tasks[roomName].collect[taskId].progress = structure.store[RESOURCE_ENERGY];
 				}else{
 					var task = basicTask(roomName);
 					tasks.type = TYPE_COLLECT;
 					task.priority = 1000;
 					task.target = structure.id
 					task.roomName = roomName;
-					task.progress = structure.store[RESOUCE_ENERGY];
+					task.progress = structure.store[RESOURCE_ENERGY];
 					Memory.tasks[roomName].collect[task.id] = task;
 				}
 			}
@@ -119,7 +119,7 @@ module.exports = {
 				&& (structure.hitsMax - structure.hits) >= structure.hitsMax * 0.1){
 				var taskId = findTask(Memory.tasks[roomName].repair,structure.id);
 				if(taskId){
-					Memory.tasks[roomName].repair[taskId].progress = structure.store[RESOUCE_ENERGY];
+					Memory.tasks[roomName].repair[taskId].progress = structure.hitsMax - structure.hits 
 				}else{
 					var task = basicTask(roomName);
 					task.type = TYPE_REPAIR;
@@ -144,7 +144,6 @@ module.exports = {
 			collect:{},
 			fight:{},
 		};
-		console.log("YES");
 		for(var i in sources){
 			var task = basicTask(roomName);
 			task.type = TYPE_HARVEST;

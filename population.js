@@ -45,7 +45,7 @@ function push(roomName, item){
 function sumUp(roomName, role){
 	var count = 0;
 	for(var i in Game.creeps){
-		if(Game.creeps.charged==roomName 
+		if(Game.creeps.subjection==roomName 
 		&& Game.creeps.memory.role == role){
 			count++;
 		}
@@ -107,7 +107,7 @@ function checkPopulation(roomName){
 				item.priority = rolesPriority[role];
 				item.body = designBody(roomName, role);
 				item.memory = {
-					charged: roomName,
+					subjection: roomName,
 					role: role,
 				};
 				push(roomName, item);

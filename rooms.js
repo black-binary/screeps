@@ -8,21 +8,22 @@ module.exports = {
 			Memory.rooms[roomName] = {};
 			this.initRoomData(roomName);
 		}
+		this.initRoomData(roomName);
 		this.scanRoomObjects(roomName);
 	},
 
-	initRoomData:function(roomName,charged = undefined){
+	initRoomData:function(roomName,subjection = undefined){
 		var objects = this.scanRoomObjects(roomName);
 		var mem = {};
-		mem.rooms[producedEnergy] = 0;
-		mem.rooms[consumedEnergy] = 0;
-		mem.rooms[collectedEnergy] = 0;
-		mem.rooms[storedEnergy] = 0;
-		if(charged == undefined){
-			mem.owned = true;
-		}else{
+		mem.producedEnergy = 0;
+		mem.consumedEnergy = 0;
+		mem.collectedEnergy = 0;
+		mem.storedEnergy = 0;
+		if(subjection){
 			mem.owned = false;
-			mem.charged = charged;
+			mem.subjection = subjection;
+		}else{
+			mem.owned = true;
 		}
 		Memory.rooms[roomName] = mem;
 	},
