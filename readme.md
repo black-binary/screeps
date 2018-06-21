@@ -17,7 +17,6 @@
 房间名:
 {
 	objects:{..}矿/工地/建筑,
-	population:{..}房间的人口设定,
 	owned: 是否占有(远程采集用),
 	若owned为假:
 	charged: 隶属的房间号(远程采集用)
@@ -121,58 +120,66 @@ Creep.memory的结构
 
 {
 	task:接受的任务,
-	charged:隶属的房间,
+	subjection:隶属的房间,
 	role:角色
 }
 
 #### 角色配置
 	
 - Worker
-	万能工人
+
 	[WORK,CARRY,MOVE] * n ,1<=n<=3
-	配置根据当前房间等级调整
+
+	万能工人,配置根据当前房间等级调整
 
 - Harvester
+
 	进行container mining的采集者
+
 	[WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE]
 
 - Hauler
+
 	进行能量运输的搬运工
+
 	[CARRY,MOVE] * n
 
 - Upgrader
+
 	后期专注升级
+
 	[WORK,MOVE] * n + [CARRY]
 
 - Guard
 	...
 
-#### 孵化队列
+#### 人口策略
 
-每个spawn有一个孵化的优先队列(堆好像没有必要?元素太少), 按优先级复活
-存储在Memory.rooms[room_name].population.queue
-	
-结构如下:
+存储位置Memory.population[room_name]
 
-id:
+优先孵化优先等级高的
+
+结构:
+
+(role):
 {
-	priority:孵化优先级,
-	memory:{...}孵化后creep的初始化memory,
-	body:creep配置,
-	num:孵化数量
+	current: 当前这个role的数量
+	schedule: 计划中的数量
+	priority: 重生优先级
 }
 
-#### 孵化策略
-
-存储位置Memory.rooms.respawnQueue
-
 - 采集
+
 	等级<=2时, harvester数=sources数*2
+
 	等级>=3时, harvester数=sources数
 
 - 运输
+
 	等级>=3时, 2个hauler
+
 	若能量堆积, 配置+1
+
 	若能量不足, 配置-1
 
 	堆积/不足判定用 房间的collected/storedEnergy 衡量
@@ -193,8 +200,7 @@ id:
 
 - 移动
 
-	如果目标不在当前房间,房际移动
-	否则向目标动
+	如果目标不在当前房间,房际移动,否则向目标动
 
 - 房际移动
 
@@ -203,7 +209,9 @@ id:
 - 采集
 
 	先移动
+
 	普通采集: 跑过去挖
+
 	固定采集: 跑到指定位置(target)站着挖(target1)
 
 - 运输/升级/建造/战斗

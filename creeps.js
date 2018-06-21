@@ -1,5 +1,5 @@
-require('constans.js');
-action = require('action.js');
+require('constans');
+action = require('action');
 
 function findMaxPriority(tasks){
 	if(tasks.length == 0){
@@ -25,8 +25,7 @@ function isEmpty(creep){
 module.exports = {
 	run: function(creep){
 		if(creep.memory.task){
-			if(processTask(creep)){ //if its job is done
-				//find a job for it
+			if(processTask(creep)){ //if its job is done, find another job
 				this.finishTask(creep);
 				if(!this.allocateTask(creep)){
 					creep.say('idle');
@@ -41,7 +40,7 @@ module.exports = {
 		}
 	},
 
-	allocateTask:function(creep):{
+	allocateTask:function(creep){
 		var tasks = this.avalibleTasks(creep);
 		if(tasks.length > 0 ){
 			this.acceptTask(creep.findMaxPriority(tasks));
@@ -82,7 +81,6 @@ module.exports = {
 				}
 			}
 		}else if(creep.role == 'harvester'){
-			//var tasks = allTasks.harvest;
 
 		}else if(creep.role == 'hauler'){
 
@@ -96,7 +94,7 @@ module.exports = {
 			Memory.tasks[task.roomName][task.type][task.id].working += 1;
 		}else{
 			Memory.tasks[task.roomName][task.type][task.id].progress += creep.capacity[RESOUCE_ENERGY];
-			creep.memory.task.progress = creep.capacity[RESOUCE_ENERGY];  //a trick too
+			creep.memory.task.progress = creep.capacity[RESOUCE_ENERGY];  //a trick !!
 		}
 	},
 
