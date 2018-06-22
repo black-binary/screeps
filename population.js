@@ -54,7 +54,7 @@ function updatePopulation(roomName){
 	for(var role in population){
 		var current = sumUp(roomName,role);
 		Memory.population[roomName][role].current = current;
-		console.log("role: "+role+" num: "+current);
+		//console.log("role: "+role+" num: "+current);
 	}
 }
 
@@ -76,7 +76,7 @@ function respawn(roomName){
 			var memory = basicMemory(roomName, role);
 			//console.log(memory);
 			if(spawns[i].spawnCreep(body,utils.genId(),{memory:memory}) == OK){
-				console.log("YES");
+				console.log("spawning");
 			}
 		}
 	}
@@ -125,8 +125,8 @@ module.exports = {
 			population[role].schedule = 0;
 			population[role].priority = rolesPriority[role];
 		}
-		population.worker.schedule = Memory.rooms[roomName].objects.sources.length * 2;
-		population.upgrader.schedule = 1;
+		population.worker.schedule = Memory.rooms[roomName].objects.sources.length * 3 + 1;
+		//population.upgrader.schedule = 1;
 		Memory.population[roomName] = population;
 	},
 

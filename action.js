@@ -1,10 +1,19 @@
-require('constans.js');
+require('constants');
+function shortMove(creep, obj){
+	creep.moveTo(obj);
+}
+
+function remoteMove(creep,roomName){
+	var exit = creep.pos.findClosestByPath(creep.room.findExitTo(roomName));
+	creep.moveTo(exit,{visualizePathStyle:{}});
+}
+
 
 module.exports = {
 	move: function(creep){
 		var obj = Game.getObjectById(creep.memory.task.target);
-		currentRoom = creep.room.name;
-		targetRoom = obj.room.name;
+		currentRoom = creep.pos.roomName;
+		targetRoom = obj.pos.roomName;
 		if(currentRoom = targetRoom){
 			var range = creep.memory.task.range;
 			if(creep.pos.getRangeTo(obj) <= range){
@@ -15,13 +24,6 @@ module.exports = {
 			remoteMove(creep);
 		}
 		return true;
-	},
-	shortMove: function(creep, obj){
-		creep.moveTo(obj);
-	},
-	remoteMove: function(creep,roomName){
-		var exit = creep.pos.findClosestByPath(creep.room.findExitTo(roomName));
-		creep.moveTo(exit,{visualizePathStyle:{}});
 	},
 
 	containerHarvest: function(creep){
@@ -35,12 +37,12 @@ module.exports = {
 	},
 
 	collectEnergy: function(creep){
-		var target = Game.getObjectById(creep.memory.task.target)
-		return creep.withdraw(target, RESOUCE_ENERGY);
+		var target = Game.getObjectById(creep.memory.task.target);
+		return creep.withdraw(target, RESOURCE_ENERGY);
 	},
 
 	storeEnergy: function(creep){
-		var target = Game.getObjectById(creep.memory.task.target)
+		var target = Game.getObjectById(creep.memory.task.target);
 		/*
 		var transferStruct = [
 			STRUCTURE_EXTENSION,
@@ -54,14 +56,19 @@ module.exports = {
 		];*/
 		var subtype = creep.memory.task.subtype;
 		if(subtype == SUBTYPE_TRANSFER_STORE){
-			return creep.transfer(target, RESOUCE_ENERGY);
+			return creep.transfer(target, RESOURCE_ENERGY);
 		}else{ //store
-			return creep.store(target, RESOUCE_ENERGY);
+			return creep.store(target, RESOURCE_ENERGY);
 		}
 	},
 
 	upgrade: function(creep){
-		var target = Game.getObjectById(creep.memory.task.target)
-		return creep.transfer(target, RESOUCE_ENERGY);
+		var target = Game.getObjectById(creep.memory.task.target);
+		return creep.transfer(target, RESOURCE_ENERGY);
 	},
+
+	build: function(creep){
+		var target = Game.getObjectById(creep.memory.task.target);
+		return creep.build(target);
+	}
 };

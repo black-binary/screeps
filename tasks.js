@@ -1,8 +1,6 @@
 require('constants');
 var utils = require('utils');
 
-var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
 function findTask(tasks, target){
 	for(var i in tasks){
 		if(tasks[i].target == target){
@@ -17,6 +15,8 @@ function basicTask(roomName){
 		id: utils.genId(),
 		roomName: roomName,
 		range: 1,
+		working: 0,
+		requiring: 9999999,
 	}
 }
 
@@ -33,21 +33,39 @@ module.exports = {
 	},
 
 	updateTasks:function(roomName){
+		var sources = Memory.rooms[roomName].objects.sources;
 		var structures = Memory.rooms[roomName].objects.structures;
 		var constructionSites = Memory.rooms[roomName].objects.constructionSites;
 		//console.log(constructionSites.length);
+		
+		for(var i in sources){
+			var taskId = findTask(Memory.tasks[roomName].harvest,sources[i].id);
+			if(taskId){
+				continue;
+			}else{
+				var task = basicTask(roomName);
+				task.type = TYPE_HARVEST;
+				task.subtype = SUBTYPE_NORMAL_HARVEST;
+				task.priority = 1000;
+				task.target = sources[i].id;
+				task.requiring = 2;
+				task.roomName = roomName;
+				Memory.tasks[roomName].harvest[task.id] = task;
+			}
+		}
+
 		//build
+		
 		for(var i in constructionSites){
 			constructionSite = constructionSites[i];
 			var taskId = findTask(Memory.tasks[roomName].build,constructionSite.id);
 			if(taskId){
-				Memory.tasks[roomName].build[taskId].progress = constructionSite.progress;
+				Memory.tasks[roomName].build[taskId].requiring = constructionSite.progressTotal - constructionSite.progress;
 			}else{
 				var task = basicTask(roomName);
 				task.type = TYPE_BUILD;
 				task.priority = 900;
-				task.progress = constructionSite.progressTotal;
-				task.schedule = 0;
+				task.requiring = constructionSite.progressTotal;
 				task.target = constructionSite.id;
 				task.roomName = roomName;
 				task.range = 3;
@@ -59,42 +77,37 @@ module.exports = {
 		//store/collect
 		for(var i in structures){
 			var structure = structures[i];
-			var structureType = structures.structureType;
+			var structureType = structure.structureType;
+			//console.log(structureType);
 
 			//store
-			if(structureType == STRUCTURE_EXTENSION
-			|| structureType == STRUCTURE_SPAWN
-			|| structureType == STRUCTURE_CONTAINER
-			|| structureType == STRUCTURE_STORAGE
-			|| structureType == STRUCTURE_LINK){
+			if(structureType == STRUCTURE_EXTENSION || structureType == STRUCTURE_SPAWN || structureType == STRUCTURE_CONTAINER || structureType == STRUCTURE_STORAGE || structureType == STRUCTURE_LINK){
 				var taskId = findTask(Memory.tasks[roomName].store,structure.id);
 				var task = basicTask(roomName);
 				if(structureType == STRUCTURE_EXTENSION || structureType == STRUCTURE_SPAWN){
 					if(taskId){
-						Memory.tasks[roomName].store[taskId].progress = structure.energyCapacity - structure.energy;
+						Memory.tasks[roomName].store[taskId].requiring = structure.energyCapacity - structure.energy;
 					}else{
 						task.type = TYPE_STORE;
 						task.subtype = SUBTYPE_TRANSFER_STORE;
 						task.priority = 1000;
 						task.target = structure.id;
-						task.progress = structure.energyCapacity - structure.energy;
+						task.requiring = structure.energyCapacity - structure.energy;
+						Memory.tasks[roomName].store[task.id] = task;
+						console.log("hit");
 					}
-				}else if(structureType == STRUCTURE_STORAGE
-					|| structureType == STRUCTURE_LINK
-					|| (structureType == STRUCTURE_CONTAINER 
-						&& !utils.testContainer(structure)) ){
+				}else if(structureType == STRUCTURE_STORAGE || structureType == STRUCTURE_LINK || (structureType == STRUCTURE_CONTAINER && !utils.testContainer(structure)) ){
 					if(taskId){
-						Memory.tasks[roomName].store[taskId].progress = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
+						Memory.tasks[roomName].store[taskId].requiring = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
 					}else{
 						task.type = TYPE_STORE;
 						task.subtype = SUBTYPE_STORE_STORE;
 						task.priority = 900;
 						task.target = structure.id;
-						task.progress = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
+						task.requiring = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
+						Memory.tasks[roomName].store[task.id] = task;
 					}
 				}
-				task.roomName = roomName;
-				Memory.tasks[roomName].store[task.id] = task;
 			}
 
 			//collect
@@ -102,31 +115,30 @@ module.exports = {
 			{
 				var taskId = findTask(Memory.tasks[roomName].collect,structure.id);
 				if(taskId){
-					Memory.tasks[roomName].collect[taskId].progress = structure.store[RESOURCE_ENERGY];
+					Memory.tasks[roomName].collect[taskId].requiring = structure.store[RESOURCE_ENERGY];
 				}else{
 					var task = basicTask(roomName);
 					tasks.type = TYPE_COLLECT;
 					task.priority = 1000;
 					task.target = structure.id
 					task.roomName = roomName;
-					task.progress = structure.store[RESOURCE_ENERGY];
+					task.requiring = structure.store[RESOURCE_ENERGY];
 					Memory.tasks[roomName].collect[task.id] = task;
 				}
 			}
 
 			//repair
-			if(structureType != STRUCTURE_WALL && structureType != STRUCTURE_RAMPART
-				&& (structure.hitsMax - structure.hits) >= structure.hitsMax * 0.1){
+			if(structureType != STRUCTURE_WALL && structureType != STRUCTURE_RAMPART && (structure.hitsMax - structure.hits) >= structure.hitsMax * 0.1){
 				var taskId = findTask(Memory.tasks[roomName].repair,structure.id);
 				if(taskId){
-					Memory.tasks[roomName].repair[taskId].progress = structure.hitsMax - structure.hits 
+					Memory.tasks[roomName].repair[taskId].requiring = structure.hitsMax - structure.hits 
 				}else{
 					var task = basicTask(roomName);
 					task.type = TYPE_REPAIR;
 					task.priority = 1100;
 					task.target = structure.id;
 					task.roomName = roomName;
-					task.progress = structure.hitsMax - structure.hits;
+					task.requiring = structure.hitsMax - structure.hits;
 					Memory.tasks[roomName].repair[task.id] = task;
 				}
 			}
@@ -134,7 +146,6 @@ module.exports = {
 	},
 
 	initStaticTasks:function(roomName){ //run once
-		var sources = Memory.rooms[roomName].objects.sources;
 		var tasksList = {
 			harvest:{},
 			build:{},
@@ -144,23 +155,13 @@ module.exports = {
 			collect:{},
 			fight:{},
 		};
-		for(var i in sources){
-			var task = basicTask(roomName);
-			task.type = TYPE_HARVEST;
-			task.subtype = SUBTYPE_NORMAL_HARVEST;
-			task.priority = 1000;
-			task.target = sources[i].id;
-			task.require = 2;
-			task.roomName = roomName;
-			tasksList.harvest[task.id] = task;
-		}
 
 		var controller = Game.rooms[roomName].controller;
 		var task = basicTask(roomName);
 		task.type = TYPE_UPGRADE;
-		task.priority = 1000;
+		task.priority = 950;
 		task.target = controller.id;
-		task.require = 1;
+		task.requiring = 1;
 		task.roomName = roomName;
 		task.range = 3;
 		tasksList.upgrade[task.id] = task;

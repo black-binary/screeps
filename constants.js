@@ -1,9 +1,9 @@
-global.TYPE_HARVEST = 1;
-global.TYPE_COLLECT= 2;
-global.TYPE_STORE = 3;
-global.TYPE_REPAIR = 4;
-global.TYPE_BUILD = 5;
-global.TYPE_UPGRADE = 6;
+global.TYPE_HARVEST = 'harvest';
+global.TYPE_COLLECT= 'collect';
+global.TYPE_STORE = 'store';
+global.TYPE_REPAIR = 'repair';
+global.TYPE_BUILD = 'build';
+global.TYPE_UPGRADE = 'upgrade';
 
 global.SUBTYPE_FIXED_HARVEST = 1;
 global.SUBTYPE_REMOTE_HARVEST = 2;
