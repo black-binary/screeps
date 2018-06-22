@@ -1,4 +1,5 @@
 require('constants');
+
 function shortMove(creep, obj){
 	creep.moveTo(obj);
 }
@@ -7,7 +8,6 @@ function remoteMove(creep,roomName){
 	var exit = creep.pos.findClosestByPath(creep.room.findExitTo(roomName));
 	creep.moveTo(exit,{visualizePathStyle:{}});
 }
-
 
 module.exports = {
 	move: function(creep){
@@ -70,5 +70,10 @@ module.exports = {
 	build: function(creep){
 		var target = Game.getObjectById(creep.memory.task.target);
 		return creep.build(target);
-	}
+	},
+
+	repair: function(creep){
+		var target = Game.getObjectById(creep.memory.task.target);
+		return creep.repair(target);
+	},
 };

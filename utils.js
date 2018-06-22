@@ -20,13 +20,18 @@ module.exports = {
 		}
 		return id;
 	},
+
 	checkEveryCreep: function(){
-		var tasks = Memory.tasks;
 		for(var roomName in Memory.tasks){
 			for(var type in Memory.tasks[roomName]){
 				for(var id in Memory.tasks[roomName][type]){
 					Memory.tasks[roomName][type][id].working = 0;
 				}
+			}
+		}
+		for(var roomName in Memory.population){
+			for(var role in Memory.population[roomName]){
+				Memory.population[roomName][role].current = 0;
 			}
 		}
 		for(var name in Game.creeps){
@@ -35,10 +40,16 @@ module.exports = {
 				var roomName = creep.memory.task.roomName;
 				var type = creep.memory.task.type;
 				var id = creep.memory.task.id;
-				Memory.tasks[roomName][type][id].working++;
+				if(Memory.tasks[roomName][type][id]){
+					Memory.tasks[roomName][type][id].working++;
+				}else{
+					delete creep.memory.task;
+				}
 			}
 			var role = creep.memory.role;
-			Memory.population[creep.memory.subjection][role]
+			Memory.population[creep.memory.subjection][role].current++;
+
 		}
 	},
 };
+

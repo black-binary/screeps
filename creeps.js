@@ -78,7 +78,6 @@ module.exports = {
 					for(var j in allTasks[i]){
 						var task = allTasks[i][j];
 						if((i == TYPE_HARVEST || i == TYPE_COLLECT) && task.working < task.requiring){
-							console.log(task.working+"/"+task.requiring);
 							result.push(task);
 						}
 					}

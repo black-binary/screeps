@@ -67,7 +67,6 @@ module.exports = {
 				task.target = constructionSite.id;
 				task.roomName = roomName;
 				task.range = 3;
-				//console.log(Memory.tasks[roomName].build);
 				Memory.tasks[roomName].build[task.id] = task;
 			}
 		}
@@ -76,7 +75,6 @@ module.exports = {
 		for(var i in structures){
 			var structure = structures[i];
 			var structureType = structure.structureType;
-			//console.log(structureType);
 
 			//store
 			if(structureType == STRUCTURE_EXTENSION || structureType == STRUCTURE_SPAWN || structureType == STRUCTURE_CONTAINER || structureType == STRUCTURE_STORAGE || structureType == STRUCTURE_LINK){

@@ -2,14 +2,14 @@ utils = require('utils');
 constants = require('constants');
 
 function findMaxPriority(roomName){
-	var strategy = _.filter(Memory.population[roomName],function(o){return o.current < o.schedule;});
-	var maxRole = undefined;
+	var strategy = Memory.population[roomName];
+	var result = undefined;
 	for(var role in strategy){
-		if(role == undefined || strategy[role].priority > strategy[maxRole].priority){
-			maxRole = role;
+		if(strategy[role].current < strategy[role].schedule && (result == undefined || strategy[role].priority > strategy[result].priority)){
+			result = role
 		}
 	}
-	return maxRole;
+	return result;
 }
 
 function getCost(body){
@@ -72,7 +72,7 @@ function feedback(roomName){
 	}else if(increaseRate > 0.2){
 		population.upgrader.schedule++;
 	}
-	Memory.population[roomName]= population;
+	Memory.population[roomName] = population;
 }
 
 module.exports = {
@@ -84,7 +84,7 @@ module.exports = {
 		if(Memory.population[roomName]== undefined){
 			this.init(roomName);
 		}
-		feedback(roomName);
+		//feedback(roomName);
 		respawn(roomName);
 	},
 
@@ -111,6 +111,5 @@ module.exports = {
 	addNewRole:function(roomName){
 
 	},
-
 };
 
