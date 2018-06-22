@@ -1,16 +1,14 @@
 ##简介
 
-一个Screeps的游戏AI, 由@blackbinary开发
+一个Screeps游戏的bot, 仍然在*开发中*, 所以会很buggy.
 
 ##模块
-
-(Todo list)
 
 ### 多房间系统
 
 同时运作多个房间, 并统计关键数据
 
-存储位置 Memory.room[房间名]
+存储位置 Memory.rooms[房间名]
 
 #### 房间数据格式
 
@@ -37,47 +35,68 @@
 #### 任务种类
 
 1. 采集 Harvest
-	- 采集之后返回(Remote mining)
-		前期普通worker在远程采集时可以接受
+
+	- 采集之后返回(Remote Mining)
+
+	前期普通worker在远程采集时可以接受
+
 	- 采集之后完成任务,接任务
-		前期普通worker可以接受
-	- 一直采集到死
-		接了这个任务的creep要在死的时候之后由全局脚本孵化新的creep并继承其memory(或直接清除memory并完成任务)
+
+	前期普通worker可以接受
+
+	- 一直采集到死(Container Mining)
+
+	进行Container Mining
 
 	已经占领的房间的source会根据等级生成采集任务, 被命令指定的房间会生成远程采集任务
 
 
 2. 收集能量 Collect
+
 	- Container
+
 	- Storage
+
 	- 地上
 
 	只有能量为0的hauler可以接受(2级以后才出现)
 
-3. 放置能量
+3. 放置能量 Store
+
 	- Extension/Spawn
+
 	- Container
+
 	- Storage
+	
 	- Link
 
 	hauler/worker 而且有能量可以接受
 
-4. 维修
+4. 维修 Repair
+
 	- 建筑发生损坏(围墙除外)超过一定比例之后会生成维修任务, 修理的目标是完全满状态
+
 	- 围墙修理到规定值
 
 	有能量的worker可以接受
 
-5. 建造
+5. 建造 Build
+
 	存在ConstructionSite时生成一个建造任务
+
 	有能量的worker可以接受
 
-6. 升级
+6. 升级 Upgrade
+
 	有能量的worker和upgrader可以接受
 
-7. 防卫型攻击
+7. 防卫型攻击 Defense
+
 	当占有的/远程房间中存在敌对目标时生成
+
 	tower(建筑)和guard可以接受(就近原则攻击)
+
 	拥有最高优先级
 
 8. 侵略型攻击
@@ -87,6 +106,7 @@
 
 所有任务存储在Memory.tasks中
 
+```
 id(唯一标识):
 {
 	type:任务类型,
@@ -102,13 +122,15 @@ id(唯一标识):
 	expire: (可选)过期tick,
 	range: 进行操作所需要的小于等于的距离,
 }
+```
 
 #### 任务接受/完成逻辑
 	
-接受任务时将任务复制到creep.memory.task, 副本中的require/progress过期
-任务的progress由全局脚本维护, 每tick更新一次
-任务的require由creep和全局脚本共同维护, memory对应的creep不存在(死了)/完成任务后更新其值
-	
+接受任务时将任务复制到creep.memory.task, 副本中的requiring等因为过期失效
+
+完成之后直接删除Creep中的副本
+
+任务不存在(建造完成,结构被摧毁)由全局脚本清理
 
 ### 人口控制系统
 
@@ -118,11 +140,13 @@ id(唯一标识):
 
 Creep.memory的结构
 
+```
 {
 	task:接受的任务,
 	subjection:隶属的房间,
 	role:角色
 }
+```
 
 #### 角色配置
 	
@@ -151,6 +175,7 @@ Creep.memory的结构
 	[WORK,MOVE] * n + [CARRY]
 
 - Guard
+
 	...
 
 #### 人口策略
@@ -161,12 +186,14 @@ Creep.memory的结构
 
 结构:
 
+```
 (role):
 {
 	current: 当前这个role的数量
 	schedule: 计划中的数量
 	priority: 重生优先级
 }
+```
 
 - 采集
 
@@ -186,14 +213,19 @@ Creep.memory的结构
 
 - 升级
 	最低1个worker/upgrader
+
 	若能量堆积, +1
+
 	若能量不足, -1
 
 - 建造
+
 	若能量盈余而且存在建造任务
+
 	则每4个工地1个creep
 
 - 战斗
+
 	每个房间固定1个guard
 	
 ### 行动系统
