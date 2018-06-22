@@ -10,7 +10,8 @@ function cleanTasks(){
 	for(var roomName in Memory.tasks){
 		for(var type in Memory.tasks[roomName]){
 			for(var id in Memory.tasks[roomName][type]){
-				if(Game.getObjectById(Memory.tasks[roomName][type][id].target) == undefined){
+				var target = Game.getObjectById(Memory.tasks[roomName][type][id].target);
+				if(target == undefined || type == TYPE_REPAIR && target.hitsMax == target.hits){
 					delete Memory.tasks[roomName][type][id];
 				}
 			}

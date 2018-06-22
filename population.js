@@ -1,5 +1,5 @@
-utils = require('utils');
-constants = require('constants');
+var utils = require('utils');
+require('constants');
 
 function findMaxPriority(roomName){
 	var strategy = Memory.population[roomName];
@@ -31,11 +31,21 @@ function designBody(roomName, role){
 		}
 	}else if(role == 'hauler'){
 		var base = [CARRY,MOVE];
+		//<=6 bases
 		for(var cost = 0; energy >= cost && cost <= 100 * 5; cost += 100 ){
 			body = body.concat(base);
 		}
 	}else if(role == 'harvester'){
-
+		var body1 = [WORK,WORK,WORK,MOVE,MOVE];
+		var body2 = [WORK,WORK,WORK,WORK,MOVE,MOVE];
+		var body3 = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE];
+		if(energy > getCost(body3)){
+			body = body3;
+		}else if(energy > getCost(body2)){
+			body = body2;
+		}else if(energy > getCost(body1)){
+			body = body1;
+		}
 	}
 	return body;
 }

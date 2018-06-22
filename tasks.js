@@ -130,7 +130,7 @@ module.exports = {
 				}else{
 					var task = basicTask(roomName);
 					task.type = TYPE_REPAIR;
-					task.priority = 1100;
+					task.priority = 970;
 					task.target = structure.id;
 					task.roomName = roomName;
 					task.requiring = structure.hitsMax - structure.hits;
@@ -160,6 +160,15 @@ module.exports = {
 		task.roomName = roomName;
 		task.range = 3;
 		tasksList.upgrade[task.id] = task;
+
+		var task1 = basicTask(roomName);
+		task1.type = TYPE_UPGRADE;
+		task1.priority = 700;
+		task1.target = controller.id;
+		task1.requiring = 9999999;
+		task1.roomName = roomName;
+		task1.range = 3;
+		tasksList.upgrade[task1.id] = task1;
 
 		Memory.tasks[roomName] = tasksList;
 	},

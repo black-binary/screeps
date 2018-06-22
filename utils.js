@@ -1,6 +1,7 @@
 //some commonly used functions
 
 var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
 module.exports = {
 	markContainer: function(container){
 		var id = container.id;
@@ -41,7 +42,7 @@ module.exports = {
 				var type = creep.memory.task.type;
 				var id = creep.memory.task.id;
 				if(Memory.tasks[roomName][type][id]){
-					Memory.tasks[roomName][type][id].working++;
+					Memory.tasks[roomName][type][id].working += creep.memory.task.working;
 				}else{
 					delete creep.memory.task;
 				}

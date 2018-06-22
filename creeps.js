@@ -22,16 +22,13 @@ function isEmpty(creep){
 	return _.sum(creep.carry) == 0;
 }
 
+function isFixed(creep){
+	var s = Game.getObjectById(creep.task.target)
+	return s.hits == s.hitsMax;
+}
+
 module.exports = {
 	run: function(creep){
-		/*if(creep.memory.task){
-			var roomName = creep.memory.task.roomName;
-			var type = creep.memory.task.type;
-			var id = creep.memory.task.id;
-			if(Memory.tasks[roomName][type][id] == undefined){
-				delete creep.memory.task;
-			}
-		}*/
 		if(creep.memory.task){
 			if(this.processTask(creep)){ //if its job is done, find another job
 				this.finishTask(creep);
@@ -68,17 +65,28 @@ module.exports = {
 				for(var i in allTasks){
 					for(var j in allTasks[i]){
 						var task = allTasks[i][j];
-						if((i == TYPE_STORE || i == TYPE_BUILD || i == TYPE_REPAIR || i == TYPE_UPGRADE) && task.working < task.requiring){
+						if((i == TYPE_STORE || i == TYPE_BUILD || i == TYPE_REPAIR || i == TYPE_UPGRADE) && (task.working < task.requiring)){
 							result.push(task);
 						}
 					}
 				}
 			}else{  //harvest/collect
-				for(var i in allTasks){ 
-					for(var j in allTasks[i]){
-						var task = allTasks[i][j];
-						if((i == TYPE_HARVEST || i == TYPE_COLLECT) && task.working < task.requiring){
-							result.push(task);
+				if(Memory.rooms[roomName].containingHarvest){
+					for(var i in allTasks){ 
+						for(var j in allTasks[i]){
+							var task = allTasks[i][j];
+							if(i == TYPE_COLLECT && task.working < task.requiring){
+								result.push(task);
+							}
+						}
+					}
+				}else{
+					for(var i in allTasks){ 
+						for(var j in allTasks[i]){
+							var task = allTasks[i][j];
+							if((i == TYPE_HARVEST || i == TYPE_COLLECT) && task.working < task.requiring){
+								result.push(task);
+							}
 						}
 					}
 				}
