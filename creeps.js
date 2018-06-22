@@ -24,14 +24,14 @@ function isEmpty(creep){
 
 module.exports = {
 	run: function(creep){
-		if(creep.memory.task){
+		/*if(creep.memory.task){
 			var roomName = creep.memory.task.roomName;
 			var type = creep.memory.task.type;
 			var id = creep.memory.task.id;
 			if(Memory.tasks[roomName][type][id] == undefined){
 				delete creep.memory.task;
 			}
-		}
+		}*/
 		if(creep.memory.task){
 			if(this.processTask(creep)){ //if its job is done, find another job
 				this.finishTask(creep);
@@ -77,12 +77,8 @@ module.exports = {
 				for(var i in allTasks){ 
 					for(var j in allTasks[i]){
 						var task = allTasks[i][j];
-						//console.log("type:"+task.type+" "+task.working+"/"+task.requiring);
 						if((i == TYPE_HARVEST || i == TYPE_COLLECT) && task.working < task.requiring){
-							console.log("produce");
 							console.log(task.working+"/"+task.requiring);
-							console.log(task.working < task.requiring);
-							console.log(task.type);
 							result.push(task);
 						}
 					}
@@ -111,10 +107,8 @@ module.exports = {
 	acceptTask: function(creep, task){
 		creep.memory.task = task;
 		if(task.type == TYPE_HARVEST || task.type == TYPE_UPGRADE){
-			//console.log(task.type);
 			Memory.tasks[task.roomName][task.type][task.id].working += 1;
-			console.log(Memory.tasks[task.roomName][task.type][task.id].working);
-			//console.log(Memory.tasks[task.roomName][task.type][task.id].requiring);
+			creep.memory.task.working = 1;
 		}else{
 			Memory.tasks[task.roomName][task.type][task.id].working += creep.carry[RESOURCE_ENERGY];
 			creep.memory.task.working = creep.carry[RESOURCE_ENERGY];  //a trick !!
@@ -122,12 +116,6 @@ module.exports = {
 	},
 
 	finishTask: function(creep){
-		var task = creep.memory.task;
-		if(task.type == TYPE_HARVEST){
-			Memory.tasks[task.roomName][task.type][task.id].working -= 1;
-		}else{
-			Memory.tasks[task.roomName][task.type][task.id].working -= creep.memory.task.working;
-		}
 		delete creep.memory.task;
 	},
 

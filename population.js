@@ -2,24 +2,14 @@ utils = require('utils');
 constants = require('constants');
 
 function findMaxPriority(roomName){
-	var population = Memory.population[roomName];
-	for(var role in population){
-		if(population[role].current < population[role].schedule){
-			return role;
+	var strategy = _.filter(Memory.population[roomName],function(o){return o.current < o.schedule;});
+	var maxRole = undefined;
+	for(var role in strategy){
+		if(role == undefined || strategy[role].priority > strategy[maxRole].priority){
+			maxRole = role;
 		}
 	}
-	return undefined;
-}
-
-function sumUp(roomName, role){
-	var count = 0;
-	for(var i in Game.creeps){
-		if(Game.creeps[i].memory.subjection == roomName 
-		&& Game.creeps[i].memory.role == role){
-			count++;
-		}
-	}
-	return count;
+	return maxRole;
 }
 
 function getCost(body){
@@ -45,17 +35,9 @@ function designBody(roomName, role){
 			body = body.concat(base);
 		}
 	}else if(role == 'harvester'){
+
 	}
 	return body;
-}
-
-function updatePopulation(roomName){
-	var population = Memory.population[roomName];
-	for(var role in population){
-		var current = sumUp(roomName,role);
-		Memory.population[roomName][role].current = current;
-		//console.log("role: "+role+" num: "+current);
-	}
 }
 
 function basicMemory(roomName, role){
@@ -74,10 +56,7 @@ function respawn(roomName){
 		if(spawns[i].spawning == undefined && role != undefined){
 			var body = designBody(roomName, role);
 			var memory = basicMemory(roomName, role);
-			//console.log(memory);
-			if(spawns[i].spawnCreep(body,utils.genId(),{memory:memory}) == OK){
-				console.log("spawning");
-			}
+			spawns[i].spawnCreep(body,utils.genId(),{memory:memory});
 		}
 	}
 }
@@ -105,7 +84,6 @@ module.exports = {
 		if(Memory.population[roomName]== undefined){
 			this.init(roomName);
 		}
-		updatePopulation(roomName);
 		feedback(roomName);
 		respawn(roomName);
 	},

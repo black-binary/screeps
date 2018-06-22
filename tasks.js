@@ -36,8 +36,7 @@ module.exports = {
 		var sources = Memory.rooms[roomName].objects.sources;
 		var structures = Memory.rooms[roomName].objects.structures;
 		var constructionSites = Memory.rooms[roomName].objects.constructionSites;
-		//console.log(constructionSites.length);
-		
+		//harvest
 		for(var i in sources){
 			var taskId = findTask(Memory.tasks[roomName].harvest,sources[i].id);
 			if(taskId){
@@ -48,14 +47,13 @@ module.exports = {
 				task.subtype = SUBTYPE_NORMAL_HARVEST;
 				task.priority = 1000;
 				task.target = sources[i].id;
-				task.requiring = 2;
+				task.requiring = 3;
 				task.roomName = roomName;
 				Memory.tasks[roomName].harvest[task.id] = task;
 			}
 		}
 
 		//build
-		
 		for(var i in constructionSites){
 			constructionSite = constructionSites[i];
 			var taskId = findTask(Memory.tasks[roomName].build,constructionSite.id);
@@ -90,11 +88,10 @@ module.exports = {
 					}else{
 						task.type = TYPE_STORE;
 						task.subtype = SUBTYPE_TRANSFER_STORE;
-						task.priority = 1000;
+						task.priority = 1200;
 						task.target = structure.id;
 						task.requiring = structure.energyCapacity - structure.energy;
 						Memory.tasks[roomName].store[task.id] = task;
-						console.log("hit");
 					}
 				}else if(structureType == STRUCTURE_STORAGE || structureType == STRUCTURE_LINK || (structureType == STRUCTURE_CONTAINER && !utils.testContainer(structure)) ){
 					if(taskId){
