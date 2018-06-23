@@ -3,15 +3,37 @@
 var alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
 module.exports = {
-	markContainer: function(container){
-		var id = container.id;
-		var roomName = container.pos.roomName;
-		Memory.containers[roomName].push(id);
+
+	markContainer: function(id){
+		var container = Game.getObjectById(id);
+		var roomName = Memory.rooms[container.pos.roomName].subjection;
+		if(!Memory.containers[roomName]){
+			Memory.containers[roomName]= {};
+		}
+		var source = containers.pos.findInRange(FIND_SOURCES,1)[0];
+		if(source){
+			Memory.containers[roomName][id] = source.id;
+		}else{
+			console.log("Invalid container. Souces not found.");
+		}
 	},
 
-	testContainer: function(container){
-		var id = container.id;
-		var roomName = container.pos.roomName;
+	unmarkContainer: function(id){
+		var container = Game.getObjectById(id);
+		var roomName = Memory.rooms[container.pos.roomName].subjection;
+		Memory.containers[roomName][id] = undefined;
+	},
+
+	testContainer: function(id){
+		var container = Game.getObjectById(id);
+		var roomName = Memory.rooms[container.pos.roomName].subjection;
+		if(!Memory.containers){
+			Memory.containers = {}
+		}
+		if(!Memory.containers[roomName]){
+			Memory.containers[roomName]= {};
+		}
+		return Memory.containers[id] != undefined;
 	},
 
 	genId: function(){
@@ -49,7 +71,6 @@ module.exports = {
 			}
 			var role = creep.memory.role;
 			Memory.population[creep.memory.subjection][role].current++;
-
 		}
 	},
 };

@@ -37,19 +37,23 @@ module.exports = {
 		var structures = Memory.rooms[roomName].objects.structures;
 		var constructionSites = Memory.rooms[roomName].objects.constructionSites;
 		//harvest
-		for(var i in sources){
-			var taskId = findTask(Memory.tasks[roomName].harvest,sources[i].id);
-			if(taskId){
-				continue;
-			}else{
-				var task = basicTask(roomName);
-				task.type = TYPE_HARVEST;
-				task.subtype = SUBTYPE_NORMAL_HARVEST;
-				task.priority = 1000;
-				task.target = sources[i].id;
-				task.requiring = 3;
-				task.roomName = roomName;
-				Memory.tasks[roomName].harvest[task.id] = task;
+		if(Memory.rooms[roomName].containerHarvesting){
+
+		}else{
+			for(var i in sources){
+				var taskId = findTask(Memory.tasks[roomName].harvest,sources[i].id);
+				if(taskId){
+					continue;
+				}else{
+					var task = basicTask(roomName);
+					task.type = TYPE_HARVEST;
+					task.subtype = SUBTYPE_NORMAL_HARVEST;
+					task.priority = 1000;
+					task.target = sources[i].id;
+					task.requiring = 3;
+					task.roomName = roomName;
+					Memory.tasks[roomName].harvest[task.id] = task;
+				}
 			}
 		}
 
@@ -91,7 +95,7 @@ module.exports = {
 						task.requiring = structure.energyCapacity - structure.energy;
 						Memory.tasks[roomName].store[task.id] = task;
 					}
-				}else if(structureType == STRUCTURE_STORAGE || structureType == STRUCTURE_LINK || (structureType == STRUCTURE_CONTAINER && !utils.testContainer(structure)) ){
+				}else if(structureType == STRUCTURE_STORAGE || structureType == STRUCTURE_LINK || (structureType == STRUCTURE_CONTAINER && !utils.testContainer(structure.id)) ){
 					if(taskId){
 						Memory.tasks[roomName].store[taskId].requiring = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
 					}else{
@@ -113,7 +117,7 @@ module.exports = {
 					Memory.tasks[roomName].collect[taskId].requiring = structure.store[RESOURCE_ENERGY];
 				}else{
 					var task = basicTask(roomName);
-					tasks.type = TYPE_COLLECT;
+					task.type = TYPE_COLLECT;
 					task.priority = 1000;
 					task.target = structure.id
 					task.roomName = roomName;
@@ -152,6 +156,7 @@ module.exports = {
 		};
 
 		var controller = Game.rooms[roomName].controller;
+		//at least 1 upgrading creep
 		var task = basicTask(roomName);
 		task.type = TYPE_UPGRADE;
 		task.priority = 950;

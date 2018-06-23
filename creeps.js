@@ -29,11 +29,16 @@ function isFixed(creep){
 
 module.exports = {
 	run: function(creep){
+		if(creep.spawning){
+			return;
+		}
 		if(creep.memory.task){
 			if(this.processTask(creep)){ //if its job is done, find another job
 				this.finishTask(creep);
 				if(!this.allocateTask(creep)){
 					creep.say('idle');
+				}else{
+					this.processTask(creep);
 				}
 			}
 		}else{
@@ -66,6 +71,8 @@ module.exports = {
 					for(var j in allTasks[i]){
 						var task = allTasks[i][j];
 						if((i == TYPE_STORE || i == TYPE_BUILD || i == TYPE_REPAIR || i == TYPE_UPGRADE) && (task.working < task.requiring)){
+							//console.log(i);
+							//console.log(task.working + "/" + task.requiring)
 							result.push(task);
 						}
 					}
@@ -75,7 +82,7 @@ module.exports = {
 					for(var i in allTasks){ 
 						for(var j in allTasks[i]){
 							var task = allTasks[i][j];
-							if(i == TYPE_COLLECT && task.working < task.requiring){
+							if(i == TYPE_COLLECT && (task.working < task.requiring)){
 								result.push(task);
 							}
 						}
@@ -84,7 +91,7 @@ module.exports = {
 					for(var i in allTasks){ 
 						for(var j in allTasks[i]){
 							var task = allTasks[i][j];
-							if((i == TYPE_HARVEST || i == TYPE_COLLECT) && task.working < task.requiring){
+							if((i == TYPE_HARVEST || i == TYPE_COLLECT) && (task.working < task.requiring)){
 								result.push(task);
 							}
 						}
@@ -107,6 +114,28 @@ module.exports = {
 					result.push(task);
 				}
 			}
+		}else if(creep.role == 'remoteHarvester'){
+			if(energyCarrying){ //to do things requiring energy
+				for(var i in allTasks){
+					for(var j in allTasks[i]){
+						var task = allTasks[i][j];
+						if((i == TYPE_STORE || i == TYPE_BUILD || i == TYPE_REPAIR || i == TYPE_UPGRADE) && (task.working < task.requiring)){
+							//console.log(i);
+							//console.log(task.working + "/" + task.requiring)
+							result.push(task);
+						}
+					}
+				}
+			}else{
+				for(var i in allTasks){ 
+					for(var j in allTasks[i]){
+						var task = allTasks[i][j];
+						if(i == TYPE_HARVEST && (task.working < task.requiring)){
+							result.push(task);
+						}
+					}
+				}
+			}
 		}
 		return result;
 	},
@@ -114,7 +143,7 @@ module.exports = {
 	acceptTask: function(creep, task){
 		creep.memory.task = task;
 		if(task.type == TYPE_HARVEST || task.type == TYPE_UPGRADE){
-			Memory.tasks[task.roomName][task.type][task.id].working += 1;
+			Memory.tasks[task.roomName][task.type][task.id].working += 1; //trick!
 			creep.memory.task.working = 1;
 		}else{
 			Memory.tasks[task.roomName][task.type][task.id].working += creep.carry[RESOURCE_ENERGY];

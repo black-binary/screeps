@@ -12,20 +12,22 @@ module.exports = {
 		this.scanRoomObjects(roomName);
 	},
 
-	initRoomData:function(roomName,subjection = undefined){
-		var objects = this.scanRoomObjects(roomName);
-		var mem = {};
-		mem.producedEnergy = 0;
-		mem.consumedEnergy = 0;
-		mem.collectedEnergy = 0;
-		mem.storedEnergy = 0;
-		if(subjection){
-			mem.owned = false;
-			mem.subjection = subjection;
-		}else{
+	initRoomData:function(roomName){
+		if(Game.rooms[roomName].controller.my){
+			var objects = this.scanRoomObjects(roomName);
+			var mem = {};
+			mem.producedEnergy = 0;
+			mem.consumedEnergy = 0;
+			mem.collectedEnergy = 0;
+			mem.storedEnergy = 0;
 			mem.owned = true;
+			Memory.rooms[roomName] = mem;
+		}else{
+			var mem = {};
+			var objects = this.scanRoomObjects(roomName);
+			mem.owned = false;
+			Memory.rooms[roomName] = mem;
 		}
-		Memory.rooms[roomName] = mem;
 	},
 
 	scanRoomObjects: function(roomName){
@@ -39,4 +41,18 @@ module.exports = {
 		console.log(Memory.rooms[roomName].objects);*/
 		return objects;
 	},
+
+	markContainerHarvesting(roomName){
+		Memory.rooms[roomName].containerHarvesting = true;
+	},
+
+	unmarkContainerHarvesting(roomName){
+		Memory.rooms[roomName].containerHarvesting = undefined;
+	},
+
+	setSubjection(roomName){
+		Memory.rooms[roomName].subjection = roomName;
+	},
+
 };
+

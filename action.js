@@ -54,12 +54,7 @@ module.exports = {
 			STRUCTURE_CONTAINER,
 			STRUCTURE_STORAGE,
 		];*/
-		var subtype = creep.memory.task.subtype;
-		if(subtype == SUBTYPE_TRANSFER_STORE){
-			return creep.transfer(target, RESOURCE_ENERGY);
-		}else{ //store
-			return creep.store(target, RESOURCE_ENERGY);
-		}
+		return creep.transfer(target, RESOURCE_ENERGY);
 	},
 
 	upgrade: function(creep){

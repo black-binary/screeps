@@ -24,10 +24,11 @@ function designBody(roomName, role){
 	var energy = Game.rooms[roomName].energyCapacityAvailable;
 	var body = [];
 	if(role == 'worker'){
-		var base = [WORK,CARRY,MOVE];
-		for(var cost = 0;cost < 200 * 3 && energy >= cost;cost += 200){
+		var base = [WORK,CARRY,MOVE,MOVE];
+		var body1 = [WORK,CARRY,MOVE,MOVE];
+		for(var cost = 0;cost <= 250 * 4 && energy >= cost;cost += 250){
 			body = body.concat(base);
-			cost += 200;
+			cost += 250;
 		}
 	}else if(role == 'hauler'){
 		var base = [CARRY,MOVE];
@@ -85,6 +86,18 @@ function feedback(roomName){
 	Memory.population[roomName] = population;
 }
 
+function updatePopulation(roomName){
+	var population = Memory.population[roomName];
+	if(Memory.rooms[roomName].containerHarvesting){
+		population.worker.schedule = 2 + Math.ceil(Memory.rooms[roomName].objects.constructionSites/4);
+		population.harvester.schedule = Memory.rooms[roomName].objects.sources.length;
+		population.hauler.schedule = 2;
+	}else{
+
+	}
+}
+
+
 module.exports = {
 
 	run: function(roomName){
@@ -105,6 +118,7 @@ module.exports = {
 			hauler:1000,
 			upgrader:900,
 			guard:800,
+			remoteHarvester:900
 		};
 		var population = {};
 		for(var role in rolesPriority){
@@ -118,8 +132,12 @@ module.exports = {
 		Memory.population[roomName] = population;
 	},
 
-	addNewRole:function(roomName){
-
+	adjust: function(roomName, role, delta){
+		Memory.population[roomName][role].schedule += delta;
 	},
+	wirte: function(roomName, role, value){
+		Memory.population[roomName][role].schedule = value;
+	},
+
 };
 
