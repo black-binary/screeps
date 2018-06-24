@@ -20,6 +20,17 @@ function basicTask(roomName){
 	}
 }
 
+function findNearbyContainer(source){
+	var container = source.pos.findInRange(FIND_STRUCTURES,1,{
+		filter:{structureType: STRUCTURE_CONTAINER}})[0];
+	if(container.id){
+		return container.id;
+	}else{
+		console.log("Error: cannot find the container");
+		return undefined
+	}
+}
+
 module.exports = {
 
 	run: function(roomName){
@@ -38,7 +49,29 @@ module.exports = {
 		var constructionSites = Memory.rooms[roomName].objects.constructionSites;
 		//harvest
 		if(Memory.rooms[roomName].containerHarvesting){
-
+			var tasks = Memory.tasks[roomName].harvest;
+			for(var i in sources){
+				var taskId = findTask(tasks,sources[i].id);
+				if(taskId){
+					if(tasks[taskId].subtype == SUBTYPE_NORMAL_HARVEST){
+						delete Memory.tasks[roomName].harvest
+					}
+				}else{
+					var task = basicTask(roomName);
+					task.type = TYPE_HARVEST;
+					task.subtype = SUBTYPE_CONTAINER_HARVEST;
+					task.priority = 1000;
+					task.target = sources[i].id;
+					task.target1 = findNearbyContainer(sources[i]);
+					task.requiring = 3;
+					task.roomName = roomName;
+					if(task.target1){
+						Memory.tasks[roomName].harvest[task.id] = task;
+					}else{
+						console.log("ERROR: Cannot find the source");
+					}
+				}
+			}
 		}else{
 			for(var i in sources){
 				var taskId = findTask(Memory.tasks[roomName].harvest,sources[i].id);
@@ -177,6 +210,11 @@ module.exports = {
 
 		Memory.tasks[roomName] = tasksList;
 	},
+
+	changeHarvesting(roomName){
+		var sources = Memory.rooms[roomName].objects.sources;
+		
+	}
 
 };
 

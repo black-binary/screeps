@@ -5,7 +5,7 @@ global.TYPE_REPAIR = 'repair';
 global.TYPE_BUILD = 'build';
 global.TYPE_UPGRADE = 'upgrade';
 
-global.SUBTYPE_FIXED_HARVEST = 1;
+global.SUBTYPE_CONTAINER_HARVEST = 1;
 global.SUBTYPE_REMOTE_HARVEST = 2;
 global.SUBTYPE_NORMAL_HARVEST = 3;
 

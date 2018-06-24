@@ -1,9 +1,9 @@
-tasks = require('tasks');
-rooms = require('rooms');
-creeps = require('creeps');
-population = require('population');
-cleaner = require('cleaner');
-utils = require('utils');
+var tasks = require('tasks');
+var rooms = require('rooms');
+var creeps = require('creeps');
+var population = require('population');
+var cleaner = require('cleaner');
+var utils = require('utils');
 
 module.exports.loop = function(){
 	cleaner.run();

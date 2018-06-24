@@ -47,6 +47,8 @@ function designBody(roomName, role){
 		}else if(energy > getCost(body1)){
 			body = body1;
 		}
+	}else if(role == 'guard'){
+		body = [ATTACK,ATTACK,ATTACK,MOVE,MOVE,MOVE];
 	}
 	return body;
 }

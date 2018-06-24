@@ -27,6 +27,10 @@ function isFixed(creep){
 	return s.hits == s.hitsMax;
 }
 
+function guard(creep){
+
+}
+
 module.exports = {
 	run: function(creep){
 		if(creep.spawning){
@@ -170,6 +174,7 @@ module.exports = {
 				return true;
 			}
 		}else if(task.type == TYPE_COLLECT){
+			action.collectEnergy(creep);
 			if(isFull(creep)){
 				return true;;
 			}
