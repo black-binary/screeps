@@ -16,7 +16,7 @@ function basicTask(roomName){
 		roomName: roomName,
 		range: 1,
 		working: 0,
-		requiring: 9999999,
+		requiring: INFINITY,
 	}
 }
 
@@ -53,8 +53,8 @@ module.exports = {
 			for(var i in sources){
 				var taskId = findTask(tasks,sources[i].id);
 				if(taskId){
-					if(tasks[taskId].subtype == SUBTYPE_NORMAL_HARVEST){
-						delete Memory.tasks[roomName].harvest
+					if(Memory.tasks[roomName].harvest[taskId].subtype == SUBTYPE_NORMAL_HARVEST){
+						delete Memory.tasks[roomName].harvest[taskId];
 					}
 				}else{
 					var task = basicTask(roomName);
@@ -67,6 +67,7 @@ module.exports = {
 					task.roomName = roomName;
 					if(task.target1){
 						Memory.tasks[roomName].harvest[task.id] = task;
+						Memory.containers[task.target1] = true;
 					}else{
 						console.log("ERROR: Cannot find the source");
 					}
@@ -76,7 +77,9 @@ module.exports = {
 			for(var i in sources){
 				var taskId = findTask(Memory.tasks[roomName].harvest,sources[i].id);
 				if(taskId){
-					continue;
+					if(Memory.tasks[roomName].harvest[taskId].subtype == SUBTYPE_CONTAINER_HARVEST){
+						delete Memory.tasks[roomName].harvest[taskId];
+					}
 				}else{
 					var task = basicTask(roomName);
 					task.type = TYPE_HARVEST;
@@ -203,18 +206,13 @@ module.exports = {
 		task1.type = TYPE_UPGRADE;
 		task1.priority = 700;
 		task1.target = controller.id;
-		task1.requiring = 9999999;
+		task1.requiring = INFINITY;
 		task1.roomName = roomName;
 		task1.range = 3;
 		tasksList.upgrade[task1.id] = task1;
 
 		Memory.tasks[roomName] = tasksList;
 	},
-
-	changeHarvesting(roomName){
-		var sources = Memory.rooms[roomName].objects.sources;
-		
-	}
 
 };
 

@@ -48,29 +48,41 @@ module.exports = {
 		for(var roomName in Memory.tasks){
 			for(var type in Memory.tasks[roomName]){
 				for(var id in Memory.tasks[roomName][type]){
-					Memory.tasks[roomName][type][id].working = 0;
+					try{
+						Memory.tasks[roomName][type][id].working = 0;
+					}catch(err){
+						console.log(err.message);
+					}
 				}
 			}
 		}
 		for(var roomName in Memory.population){
 			for(var role in Memory.population[roomName]){
-				Memory.population[roomName][role].current = 0;
+				try{
+					Memory.population[roomName][role].current = 0;
+				}catch(err){
+					console.log(err.message);
+				}
 			}
 		}
 		for(var name in Game.creeps){
-			var creep = Game.creeps[name];
-			if(creep.memory.task){
-				var roomName = creep.memory.task.roomName;
-				var type = creep.memory.task.type;
-				var id = creep.memory.task.id;
-				if(Memory.tasks[roomName][type][id]){
-					Memory.tasks[roomName][type][id].working += creep.memory.task.working;
-				}else{
-					delete creep.memory.task;
+			try{
+				var creep = Game.creeps[name];
+				if(creep.memory.task){
+					var roomName = creep.memory.task.roomName;
+					var type = creep.memory.task.type;
+					var id = creep.memory.task.id;
+					if(Memory.tasks[roomName][type][id]){
+						Memory.tasks[roomName][type][id].working += creep.memory.task.working;
+					}else{
+						delete creep.memory.task;
+					}
 				}
+				var role = creep.memory.role;
+				Memory.population[creep.memory.subjection][role].current++;
+			}catch(err){
+				console.log(err.message);
 			}
-			var role = creep.memory.role;
-			Memory.population[creep.memory.subjection][role].current++;
 		}
 	},
 };

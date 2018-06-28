@@ -95,8 +95,9 @@ function updatePopulation(roomName){
 		population.harvester.schedule = Memory.rooms[roomName].objects.sources.length;
 		population.hauler.schedule = 2;
 	}else{
-
+		population.worker.schedule = Memory.rooms[roomName].objects.sources.length * 3 + 1;
 	}
+	Memory.population[roomName] = population;
 }
 
 
@@ -110,6 +111,7 @@ module.exports = {
 			this.init(roomName);
 		}
 		//feedback(roomName);
+		updatePopulation(roomName);
 		respawn(roomName);
 	},
 
@@ -129,8 +131,6 @@ module.exports = {
 			population[role].schedule = 0;
 			population[role].priority = rolesPriority[role];
 		}
-		population.worker.schedule = Memory.rooms[roomName].objects.sources.length * 3 + 1;
-		//population.upgrader.schedule = 1;
 		Memory.population[roomName] = population;
 	},
 

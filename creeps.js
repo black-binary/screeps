@@ -1,5 +1,5 @@
 require('constants');
-action = require('action');
+var action = require('action');
 
 function findMaxPriority(tasks){
 	if(tasks.length == 0){

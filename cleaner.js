@@ -20,8 +20,23 @@ function cleanTasks(){
 	}
 }
 
+function cleanRooms(){
+	for(var roomName in Memory.rooms){
+		if(Memory.rooms[roomName].owned){
+			if(Game.rooms[roomName]){
+				if(!Game.rooms[roomName].controller.my){
+					delete Memory.rooms[roomName];
+				}
+			}else{
+				delete Memory.rooms[roomName];
+			}
+		}
+	}
+}
+
 module.exports = {
 	run:function(){
+		cleanRooms();
 		cleanTasks();
 		cleanCreeps();
 	}
